@@ -35,6 +35,16 @@
             tools:layout_editor_absoluteY="145dp"
             android:onClick="onClickButton" />
 
+        <Button
+            android:id="@+id/btnTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Test"
+            tools:layout_editor_absoluteX="148dp"
+            tools:layout_editor_absoluteY="145dp"
+            android:onClick="onClickButton" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

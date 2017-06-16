@@ -64,7 +64,7 @@ public class AppSetting
         }
     }
     
-    public void load() throws Exception
+    public void load()
     {
         _option.clear();
         
@@ -94,8 +94,9 @@ public class AppSetting
         }
         finally
         {
-            if( in != null )
-                in.close();
+            if( in != null ) {
+                try{ in.close(); } catch(Exception xe2) {}
+            }
         }
     }
     

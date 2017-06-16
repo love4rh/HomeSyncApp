@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">HomeSync</string>
     <string name="action_settings">Settings</string>
+    <string name="wifiNeeded">I can only work on WiFi.</string>
+    <string name="newFolder">New folder</string>
 </resources>

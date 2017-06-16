@@ -6,9 +6,9 @@ import static android.content.Context.WIFI_SERVICE;
 import static com.tool4us.util.CommonTool.CT;
 import static com.tool4us.net.common.NetSetting.NS;
 
-import java.io.File;
-
 import static com.tool4us.homesync.file.Repository.RT;
+
+import java.io.File;
 
 import com.tool4us.homesync.file.CompResult;
 import com.tool4us.homesync.file.FileElement;

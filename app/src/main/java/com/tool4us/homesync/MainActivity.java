@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,15 +13,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.widget.Toast;
 
 import com.tool4us.homesync.client.HomeSyncClient;
 import com.tool4us.logging.Logs;
+import com.tool4us.util.DirectoryChooserDialog;
 
 import java.io.File;
 
 import static com.tool4us.net.common.NetSetting.NS;
 import static com.tool4us.util.CommonTool.CT;
+import static com.tool4us.homesync.file.Repository.RT;
+
 
 public class MainActivity extends AppCompatActivity
 {
@@ -33,7 +37,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,6 +67,21 @@ public class MainActivity extends AppCompatActivity
         {
             xe.printStackTrace();
         }
+
+        Logs.info("RootDir:", Environment.getRootDirectory());
+        Logs.info("DataDir:", Environment.getDataDirectory());
+        Logs.info("ExternalStorage:", Environment.getExternalStorageDirectory());
+
+        Logs.info("PICTURES:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
+        Logs.info("MUSIC:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC));
+        Logs.info("PODCASTS:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS));
+        Logs.info("DIRECTORY_RINGTONES:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES));
+        Logs.info("DIRECTORY_ALARMS:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_ALARMS));
+        Logs.info("DIRECTORY_NOTIFICATIONS:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_ALARMS));
+        Logs.info("DIRECTORY_MOVIES:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES));
+        Logs.info("DIRECTORY_DOWNLOADS:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+        Logs.info("DIRECTORY_DCIM:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM));
+        Logs.info("DIRECTORY_DOCUMENTS:", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS));
     }
 
     @Override
@@ -146,7 +167,7 @@ public class MainActivity extends AppCompatActivity
         int ip = wi.getIpAddress();
 
         if( ip == 0 )
-            return "192.168.0.20"; // TODO
+            return "192.168.0.20"; // TODO change to null
 
         return CT.concat(ip & 0xff, ".", ip >> 8 & 0xff, ".", ip >> 16 & 0xff, ".", ip >> 24 & 0xff);
     }
@@ -155,37 +176,57 @@ public class MainActivity extends AppCompatActivity
     {
         switch(v.getId())
         {
-            case R.id.btnConnect:
+            case R.id.btnConnect: {
                 Logs.info("Click Connect");
 
-                if( _client.isConnected() )
-                {
+                if (_client.isConnected()) {
                     Logs.info("already connected.");
-                }
-                else
-                {
+                } else {
                     String localIP = wifiAddress();
 
-                    if( localIP != null )
-                    {
+                    if (localIP != null) {
                         _client.findServer(localIP, 6070);
-                    }
-                    else
+                    } else {
                         Logs.info("not on a wifi.");
+                        // Toast.makeText(getApplicationContext(), getString(R.string.wifiNeeded), Toast.LENGTH_SHORT).show();
+                        Snackbar.make(v, R.string.wifiNeeded, Snackbar.LENGTH_SHORT).show();
+                    }
                 }
-                break;
+            } break;
 
-            case R.id.btnSync:
+            case R.id.btnSync: {
                 Logs.info("Click Sync");
 
-                if( _client.isConnected() )
-                {
+                if (_client.isConnected()) {
                     _client.compareList();
-                }
-                else
+                } else
                     Logs.info("need to be connected.");
 
-                break;
+            } break;
+
+            case R.id.btnTest: {
+                // Create DirectoryChooserDialog and register a callback
+                DirectoryChooserDialog directoryChooserDialog =
+                    new DirectoryChooserDialog(MainActivity.this,
+                        new DirectoryChooserDialog.ChosenDirectoryListener()
+                        {
+                            @Override
+                            public void onChosenDir(String chosenDir)
+                            {
+                                Logs.info("Dir Chosen", chosenDir);
+
+                                Toast.makeText(getApplicationContext(), "Chosen directory: " + chosenDir, Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                // Toggle new folder button enabling
+                directoryChooserDialog.setNewFolderEnabled(true);
+
+                // Load directory chooser dialog for initial 'm_chosenDir' directory.
+                // The registered callback will be called upon final directory selection.
+                directoryChooserDialog.chooseDirectory("/storage"); // RT.getRootPath());
+                // */
+            }break;
         }
 
     }
