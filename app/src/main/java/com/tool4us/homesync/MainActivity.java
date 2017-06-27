@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity
 
                 // Load directory chooser dialog for initial 'm_chosenDir' directory.
                 // The registered callback will be called upon final directory selection.
-                directoryChooserDialog.chooseDirectory("/storage"); // RT.getRootPath());
+                directoryChooserDialog.chooseDirectory(RT.getRootPath()); // "/storage"
                 // */
-            }break;
+            } break;
         }
 
     }
